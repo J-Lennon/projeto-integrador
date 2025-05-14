@@ -13,7 +13,9 @@ export default function CadastroFreteiroPage() {
     arquivos: null as FileList | null,
   });
 
-  const handleChange = (key: string, value: any) => {
+  type FormKeys = keyof typeof form;
+
+  const handleChange = <K extends FormKeys>(key: K, value: typeof form[K]) => {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
@@ -22,8 +24,15 @@ export default function CadastroFreteiroPage() {
   };
 
   const handleSubmit = () => {
-    // Lógica de envio do formulário (ex: API)
-    console.log(form);
+    // Apenas para debug: evitar erro com arquivos
+    const arquivosArray = form.arquivos
+      ? Array.from(form.arquivos).map(file => file.name)
+      : [];
+
+    console.log({
+      ...form,
+      arquivos: arquivosArray,
+    });
   };
 
   return (
