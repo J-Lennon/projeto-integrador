@@ -13,10 +13,10 @@ const MeusFretes = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card>
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
+        <Card className="dark:bg-gray-900">
           <CardContent className="p-6">
-            <p>Você precisa estar logado para acessar esta página.</p>
+            <p className="dark:text-white">Você precisa estar logado para acessar esta página.</p>
             <Link to="/login">
               <Button className="mt-4">Fazer Login</Button>
             </Link>
@@ -70,31 +70,31 @@ const MeusFretes = () => {
       case 'agendado':
         return { 
           label: 'Agendado', 
-          color: 'bg-blue-100 text-blue-800', 
+          color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400', 
           icon: <Calendar className="h-4 w-4" /> 
         };
       case 'em_andamento':
         return { 
           label: 'Em Andamento', 
-          color: 'bg-yellow-100 text-yellow-800', 
+          color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400', 
           icon: <AlertCircle className="h-4 w-4" /> 
         };
       case 'concluido':
         return { 
           label: 'Concluído', 
-          color: 'bg-green-100 text-green-800', 
+          color: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400', 
           icon: <CheckCircle className="h-4 w-4" /> 
         };
       case 'cancelado':
         return { 
           label: 'Cancelado', 
-          color: 'bg-red-100 text-red-800', 
+          color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400', 
           icon: <XCircle className="h-4 w-4" /> 
         };
       default:
         return { 
           label: 'Desconhecido', 
-          color: 'bg-gray-100 text-gray-800', 
+          color: 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-400', 
           icon: <AlertCircle className="h-4 w-4" /> 
         };
     }
@@ -105,19 +105,21 @@ const MeusFretes = () => {
     : fretes.filter(frete => frete.status === filtroStatus);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Header */}
-      <header className="bg-white shadow-lg border-b-2 border-blue-100">
+      <header className="bg-white dark:bg-black shadow-lg border-b-2 border-blue-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Link to="/" className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-              <Truck className="h-10 w-10 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">Busca Já</span>
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 p-2 rounded-xl">
+                <Truck className="h-10 w-10 text-white" />
+              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 bg-clip-text text-transparent">Busca Já</span>
             </Link>
             <Link to="/perfil">
-              <Avatar className="h-12 w-12 cursor-pointer hover:ring-4 hover:ring-blue-300 transition-all duration-300 border-2 border-blue-200">
+              <Avatar className="h-12 w-12 cursor-pointer hover:ring-4 hover:ring-blue-300 dark:hover:ring-purple-300 transition-all duration-300 border-2 border-blue-200 dark:border-purple-200">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="bg-blue-100 text-blue-600 font-bold">{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                <AvatarFallback className="bg-blue-100 dark:bg-purple-100 text-blue-600 dark:text-purple-600 font-bold">{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
               </Avatar>
             </Link>
           </div>
@@ -127,8 +129,8 @@ const MeusFretes = () => {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Meus Fretes</h1>
-          <p className="text-xl text-gray-600">Acompanhe o status dos seus fretes contratados</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Meus Fretes</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300">Acompanhe o status dos seus fretes contratados</p>
         </div>
 
         {/* Filtros */}
@@ -147,8 +149,8 @@ const MeusFretes = () => {
                 onClick={() => setFiltroStatus(filtro.value)}
                 className={`rounded-2xl px-6 py-3 font-semibold transition-all duration-300 ${
                   filtroStatus === filtro.value 
-                    ? "bg-blue-600 text-white" 
-                    : "border-2 border-gray-300 hover:border-blue-600"
+                    ? "bg-blue-600 dark:bg-purple-600 text-white" 
+                    : "border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 dark:hover:border-purple-600 dark:text-gray-300"
                 }`}
               >
                 {filtro.label}
@@ -159,17 +161,17 @@ const MeusFretes = () => {
 
         {/* Lista de Fretes */}
         {fretesFiltrados.length === 0 ? (
-          <Card className="shadow-xl border-0 rounded-3xl">
+          <Card className="shadow-xl border-0 rounded-3xl dark:bg-gray-900">
             <CardContent className="p-12 text-center">
-              <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum frete encontrado</h3>
-              <p className="text-gray-600 mb-6">
+              <Package className="h-16 w-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Nenhum frete encontrado</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 {filtroStatus === 'todos' 
                   ? 'Você ainda não contratou nenhum frete.' 
                   : `Não há fretes com status "${filtroStatus}".`}
               </p>
               <Link to="/">
-                <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-2xl px-8 py-3">
+                <Button className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-purple-600 dark:to-pink-600 hover:from-blue-700 hover:to-blue-800 dark:hover:from-purple-700 dark:hover:to-pink-700 rounded-2xl px-8 py-3">
                   Contratar Primeiro Frete
                 </Button>
               </Link>
@@ -180,63 +182,63 @@ const MeusFretes = () => {
             {fretesFiltrados.map((frete) => {
               const statusInfo = getStatusInfo(frete.status);
               return (
-                <Card key={frete.id} className="shadow-xl border-0 rounded-3xl hover:shadow-2xl transition-all duration-300">
+                <Card key={frete.id} className="shadow-xl border-0 rounded-3xl hover:shadow-2xl transition-all duration-300 dark:bg-gray-900">
                   <CardContent className="p-8">
                     <div className="flex justify-between items-start mb-6">
                       <div>
                         <div className="flex items-center space-x-3 mb-4">
-                          <h3 className="text-2xl font-bold text-gray-900">{frete.freteiro}</h3>
+                          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{frete.freteiro}</h3>
                           <span className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-semibold ${statusInfo.color}`}>
                             {statusInfo.icon}
                             <span>{statusInfo.label}</span>
                           </span>
                         </div>
-                        <p className="text-gray-600 text-lg">{frete.descricao}</p>
+                        <p className="text-gray-600 dark:text-gray-300 text-lg">{frete.descricao}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-bold text-green-600">{frete.preco}</div>
-                        <div className="text-sm text-gray-500">#{frete.id.toString().padStart(6, '0')}</div>
+                        <div className="text-3xl font-bold text-green-600 dark:text-green-400">{frete.preco}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">#{frete.id.toString().padStart(6, '0')}</div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                      <div className="bg-blue-50 p-4 rounded-2xl">
+                      <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-2xl">
                         <div className="flex items-center space-x-3 mb-2">
-                          <MapPin className="h-5 w-5 text-blue-600" />
-                          <span className="font-semibold text-gray-700">Origem</span>
+                          <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <span className="font-semibold text-gray-700 dark:text-gray-200">Origem</span>
                         </div>
-                        <p className="text-gray-900">{frete.origem}</p>
+                        <p className="text-gray-900 dark:text-white">{frete.origem}</p>
                       </div>
 
-                      <div className="bg-purple-50 p-4 rounded-2xl">
+                      <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-2xl">
                         <div className="flex items-center space-x-3 mb-2">
-                          <MapPin className="h-5 w-5 text-purple-600" />
-                          <span className="font-semibold text-gray-700">Destino</span>
+                          <MapPin className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                          <span className="font-semibold text-gray-700 dark:text-gray-200">Destino</span>
                         </div>
-                        <p className="text-gray-900">{frete.destino}</p>
+                        <p className="text-gray-900 dark:text-white">{frete.destino}</p>
                       </div>
 
-                      <div className="bg-green-50 p-4 rounded-2xl">
+                      <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-2xl">
                         <div className="flex items-center space-x-3 mb-2">
-                          <Calendar className="h-5 w-5 text-green-600" />
-                          <span className="font-semibold text-gray-700">Data</span>
+                          <Calendar className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          <span className="font-semibold text-gray-700 dark:text-gray-200">Data</span>
                         </div>
-                        <p className="text-gray-900">{new Date(frete.data).toLocaleDateString('pt-BR')}</p>
+                        <p className="text-gray-900 dark:text-white">{new Date(frete.data).toLocaleDateString('pt-BR')}</p>
                       </div>
 
-                      <div className="bg-orange-50 p-4 rounded-2xl">
+                      <div className="bg-orange-50 dark:bg-orange-900/30 p-4 rounded-2xl">
                         <div className="flex items-center space-x-3 mb-2">
-                          <Clock className="h-5 w-5 text-orange-600" />
-                          <span className="font-semibold text-gray-700">Horário</span>
+                          <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                          <span className="font-semibold text-gray-700 dark:text-gray-200">Horário</span>
                         </div>
-                        <p className="text-gray-900">{frete.horario}</p>
+                        <p className="text-gray-900 dark:text-white">{frete.horario}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-4">
                       <Button 
                         variant="outline" 
-                        className="border-2 border-green-600 text-green-600 hover:bg-green-50 rounded-2xl px-6 py-3 font-semibold"
+                        className="border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-2xl px-6 py-3 font-semibold"
                         onClick={() => window.open(`tel:${frete.telefone}`, '_self')}
                       >
                         <Phone className="h-4 w-4 mr-2" />
@@ -244,7 +246,7 @@ const MeusFretes = () => {
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 rounded-2xl px-6 py-3 font-semibold"
+                        className="border-2 border-purple-600 dark:border-purple-500 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-2xl px-6 py-3 font-semibold"
                       >
                         <MessageCircle className="h-4 w-4 mr-2" />
                         Chat
@@ -252,7 +254,7 @@ const MeusFretes = () => {
                       {frete.status === 'agendado' && (
                         <Button 
                           variant="outline" 
-                          className="border-2 border-red-600 text-red-600 hover:bg-red-50 rounded-2xl px-6 py-3 font-semibold"
+                          className="border-2 border-red-600 dark:border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl px-6 py-3 font-semibold"
                         >
                           <XCircle className="h-4 w-4 mr-2" />
                           Cancelar
@@ -261,7 +263,7 @@ const MeusFretes = () => {
                       {frete.status === 'concluido' && (
                         <Button 
                           variant="outline" 
-                          className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 rounded-2xl px-6 py-3 font-semibold"
+                          className="border-2 border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-2xl px-6 py-3 font-semibold"
                         >
                           Avaliar Freteiro
                         </Button>

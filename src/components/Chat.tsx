@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, X, Phone, Video, Smile, Paperclip } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatProps {
   isOpen: boolean;
@@ -29,6 +29,7 @@ interface Message {
 
 const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -142,13 +143,27 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
     }
   };
 
+  const handlePhoneCall = () => {
+    if (recipient.phone) {
+      window.open(`tel:${recipient.phone}`, '_self');
+    }
+  };
+
+  const handleVideoCall = () => {
+    // Simular chamada de vídeo
+    toast({
+      title: "Chamada de vídeo",
+      description: "Iniciando chamada de vídeo...",
+    });
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-lg h-[700px] flex flex-col shadow-2xl border-0 rounded-3xl overflow-hidden bg-white">
+      <Card className="w-full max-w-lg h-[700px] flex flex-col shadow-2xl border-0 rounded-3xl overflow-hidden bg-white dark:bg-purple-900/90">
         {/* Header - Design Premium */}
-        <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 flex-shrink-0 relative overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-purple-600 dark:via-pink-600 dark:to-indigo-600 text-white p-6 flex-shrink-0 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20"></div>
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center space-x-4">
@@ -163,7 +178,7 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
               </div>
               <div>
                 <CardTitle className="text-xl font-bold">{recipient.name}</CardTitle>
-                <p className="text-blue-100 text-sm font-medium">
+                <p className="text-blue-100 dark:text-purple-100 text-sm font-medium">
                   {isTyping ? 'Digitando...' : 'Online agora'}
                 </p>
               </div>
@@ -174,7 +189,7 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
                   size="icon" 
                   variant="ghost" 
                   className="text-white hover:bg-white/20 rounded-xl transition-all duration-300 hover:scale-105"
-                  onClick={() => window.open(`tel:${recipient.phone}`, '_self')}
+                  onClick={handlePhoneCall}
                 >
                   <Phone className="h-5 w-5" />
                 </Button>
@@ -183,6 +198,7 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
                 size="icon" 
                 variant="ghost" 
                 className="text-white hover:bg-white/20 rounded-xl transition-all duration-300 hover:scale-105"
+                onClick={handleVideoCall}
               >
                 <Video className="h-5 w-5" />
               </Button>
@@ -198,8 +214,8 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
           </div>
         </CardHeader>
 
-        {/* Messages - Design Limpo e Moderno */}
-        <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-br from-slate-50 to-blue-50/30">
+        {/* Messages - Design com cores mais vibrantes no dark mode */}
+        <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-purple-900/30 dark:to-indigo-900/30">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -261,13 +277,13 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
           <div ref={messagesEndRef} />
         </CardContent>
 
-        {/* Input - Design Premium */}
-        <div className="p-6 bg-white border-t border-slate-200/50 flex-shrink-0">
+        {/* Input - Design Premium com cores vibrantes */}
+        <div className="p-6 bg-white dark:bg-purple-900/50 border-t border-slate-200/50 dark:border-purple-700/50 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <Button 
               size="icon"
               variant="ghost"
-              className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300"
+              className="text-slate-500 dark:text-purple-300 hover:text-blue-600 dark:hover:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-800/50 rounded-xl transition-all duration-300"
             >
               <Paperclip className="h-5 w-5" />
             </Button>
@@ -277,12 +293,12 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Digite sua mensagem..."
-                className="pl-4 pr-12 h-12 rounded-2xl border-2 border-slate-200 focus:border-blue-500 transition-all duration-300 bg-slate-50 focus:bg-white"
+                className="pl-4 pr-12 h-12 rounded-2xl border-2 border-slate-200 dark:border-purple-700 focus:border-blue-500 dark:focus:border-purple-400 transition-all duration-300 bg-slate-50 dark:bg-purple-800/30 focus:bg-white dark:focus:bg-purple-800/50"
               />
               <Button 
                 size="icon"
                 variant="ghost"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-blue-600 rounded-xl"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-purple-300 hover:text-blue-600 dark:hover:text-purple-400 rounded-xl"
               >
                 <Smile className="h-5 w-5" />
               </Button>
@@ -290,7 +306,7 @@ const Chat = ({ isOpen, onClose, recipient }: ChatProps) => {
             <Button 
               onClick={handleSendMessage}
               disabled={!message.trim()}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-2xl px-6 h-12 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-purple-700 dark:hover:to-pink-700 rounded-2xl px-6 h-12 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
             >
               <Send className="h-5 w-5" />
             </Button>

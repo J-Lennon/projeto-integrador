@@ -1,215 +1,385 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Truck, Star, MapPin, Clock, DollarSign, Filter, ChevronLeft, ChevronRight, User, MessageCircle, Calendar, Package, Search } from "lucide-react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Truck, Search, Star, MapPin, Calendar, DollarSign, User, FileText, ArrowRight, X, Phone, AlertCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { FormValidation } from "@/components/FormValidation";
 
-const BuscaResultados = () => {
+const Index = () => {
+  const [origem, setOrigem] = useState('');
+  const [destino, setDestino] = useState('');
+  const [data, setData] = useState('');
+  const [valor, setValor] = useState('');
+  const [showValidation, setShowValidation] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({
+    origem: false,
+    destino: false,
+    data: false,
+    valor: false
+  });
   const { user } = useAuth();
-  const [searchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showAbout, setShowAbout] = useState(false);
+  const [showServices, setShowServices] = useState(false);
+  const [showContact, setShowContact] = useState(false);
 
-  // Estados para busca rápida lateral
-  const [buscaOrigem, setBuscaOrigem] = useState('');
-  const [buscaDestino, setBuscaDestino] = useState('');
-  const [buscaData, setBuscaData] = useState('');
-  const [buscaValor, setBuscaValor] = useState('');
-
-  const origem = searchParams.get('origem') || '';
-  const destino = searchParams.get('destino') || '';
-  const data = searchParams.get('data') || '';
-  const valor = searchParams.get('valor') || '';
-  const veiculoFiltro = searchParams.get('veiculo') || '';
-
-  const itemsPerPage = 5;
-  const totalPages = 3;
-
-  const todosFreteiros = [
-    {
-      id: 1,
-      nome: "João Silva",
-      rating: 9.6,
-      ratingText: "Excelente",
-      avaliacoes: 67,
-      preco: "R$ 150,00",
-      precoNumerico: 150,
-      tempo: "2-4 horas",
-      veiculo: "300kg",
-      telefone: "(11) 9999-1234",
-      avatar: "/fotos/fdcc75fa-537f-4092-bb23-a08a7e2f56e4.png",
-      verificado: true,
-      descricao: "Fretes e pequenas mudanças para dentro da cidade",
-      possuiNotaFiscal: true,
-      carregaMoveis: false
-    },
-    {
-      id: 2,
-      nome: "Maria Santos",
-      rating: 9.2,
-      ratingText: "Muito bom",
-      avaliacoes: 45,
-      preco: "R$ 120,00",
-      precoNumerico: 120,
-      tempo: "3-5 horas",
-      veiculo: "450kg",
-      telefone: "(11) 9999-5678",
-      avatar: "/fotos/fdcc75fa-537f-4092-bb23-a08a7e2f56e4.png",
-      verificado: true,
-      descricao: "Frete ágil, levamos seus produtos dos menores aos maiores",
-      possuiNotaFiscal: true,
-      carregaMoveis: false
-    },
-    {
-      id: 3,
-      nome: "Carlos Oliveira",
-      rating: 8.0,
-      ratingText: "Bom",
-      avaliacoes: 34,
-      preco: "R$ 465,00",
-      precoNumerico: 465,
-      tempo: "4-6 horas",
-      veiculo: "2500kg",
-      telefone: "(11) 9999-9012",
-      avatar: "/fotos/fdcc75fa-537f-4092-bb23-a08a7e2f56e4.png",
-      verificado: false,
-      descricao: "Somos uma pequena empresa de entrega especializada de mercadorias",
-      possuiNotaFiscal: true,
-      carregaMoveis: false
-    },
-    {
-      id: 4,
-      nome: "Ana Costa",
-      rating: 6.3,
-      ratingText: "Mediano",
-      avaliacoes: 62,
-      preco: "R$ 890,00",
-      precoNumerico: 890,
-      tempo: "1-3 horas",
-      veiculo: "4800kg",
-      telefone: "(11) 9999-3456",
-      avatar: "/fotos/fdcc75fa-537f-4092-bb23-a08a7e2f56e4.png",
-      verificado: true,
-      descricao: "Para qualquer lugar do Brasil - Especialista em longas distâncias",
-      possuiNotaFiscal: true,
-      carregaMoveis: false
-    },
-    {
-      id: 5,
-      nome: "Roberto Lima",
-      rating: 9.0,
-      ratingText: "Excelente",
-      avaliacoes: 89,
-      preco: "R$ 180,00",
-      precoNumerico: 180,
-      tempo: "2-3 horas",
-      veiculo: "500kg",
-      telefone: "(11) 9999-7890",
-      avatar: "/fotos/fdcc75fa-537f-4092-bb23-a08a7e2f56e4.png",
-      verificado: true,
-      descricao: "Especialista em fretes médios e mudanças residenciais",
-      possuiNotaFiscal: true,
-      carregaMoveis: true
-    }
-  ];
-
-  // Filtrar freteiros baseado nos parâmetros de busca
-  const freteiros = useMemo(() => {
-    let filtrados = [...todosFreteiros];
-
-    // Filtrar por valor máximo
-    if (valor) {
-      const valorMaximo = parseFloat(valor.replace(/[^\d,]/g, '').replace(',', '.'));
-      if (!isNaN(valorMaximo)) {
-        filtrados = filtrados.filter(freteiro => freteiro.precoNumerico <= valorMaximo);
-      }
+  const validateField = (value: string, type: string) => {
+    if (!value.trim()) {
+      return false;
     }
 
-    // Filtrar por tipo de veículo
-    if (veiculoFiltro) {
-      filtrados = filtrados.filter(freteiro => freteiro.veiculo === veiculoFiltro);
+    switch (type) {
+      case 'cidade':
+        return value.length >= 3 && /^[a-zA-ZÀ-ÿ\s,.-]+$/.test(value);
+      case 'endereco':
+        return value.length >= 5;
+      case 'data':
+        const today = new Date();
+        const selectedDate = new Date(value);
+        return selectedDate >= today;
+      case 'valor':
+        const valorNumerico = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'));
+        return !isNaN(valorNumerico) && valorNumerico >= 10;
+      default:
+        return false;
     }
-
-    return filtrados;
-  }, [valor, veiculoFiltro]);
-
-  const handleContratarFrete = (freteiro: any) => {
-    if (!user) {
-      toast({
-        title: "Login necessário",
-        description: "Você precisa estar logado para contratar um frete.",
-        variant: "destructive"
-      });
-      navigate('/login');
-      return;
-    }
-
-    navigate(`/contratar-frete/${freteiro.id}`, { 
-      state: { freteiro, origem, destino, data, valor }
-    });
   };
 
-  const handleVerPerfil = (freteiro: any) => {
-    navigate(`/perfil-freteiro/${freteiro.id}`, { 
-      state: { freteiro }
-    });
+  const handleInputChange = (field: string, value: string) => {
+    switch (field) {
+      case 'origem':
+        setOrigem(value);
+        setFieldErrors(prev => ({ ...prev, origem: showValidation && !validateField(value, 'cidade') }));
+        break;
+      case 'destino':
+        setDestino(value);
+        setFieldErrors(prev => ({ ...prev, destino: showValidation && !validateField(value, 'endereco') }));
+        break;
+      case 'data':
+        setData(value);
+        setFieldErrors(prev => ({ ...prev, data: showValidation && !validateField(value, 'data') }));
+        break;
+      case 'valor':
+        setValor(value);
+        setFieldErrors(prev => ({ ...prev, valor: showValidation && !validateField(value, 'valor') }));
+        break;
+    }
   };
 
-  const handleBuscaRapida = () => {
-    if (!buscaOrigem.trim() || !buscaDestino.trim() || !buscaData || !buscaValor.trim()) {
+  const handleSearch = () => {
+    setShowValidation(true);
+    
+    const isOrigemValid = validateField(origem, 'cidade');
+    const isDestinoValid = validateField(destino, 'endereco');
+    const isDataValid = validateField(data, 'data');
+    const isValorValid = validateField(valor, 'valor');
+
+    setFieldErrors({
+      origem: !isOrigemValid,
+      destino: !isDestinoValid,
+      data: !isDataValid,
+      valor: !isValorValid
+    });
+
+    if (!isOrigemValid || !isDestinoValid || !isDataValid || !isValorValid) {
       toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos antes de pesquisar.",
+        title: "Campos inválidos",
+        description: "Por favor, corrija os campos destacados antes de pesquisar.",
         variant: "destructive"
       });
       return;
     }
 
     const params = new URLSearchParams();
-    params.append('origem', buscaOrigem);
-    params.append('destino', buscaDestino);
-    params.append('data', buscaData);
-    params.append('valor', buscaValor);
+    params.append('origem', origem);
+    params.append('destino', destino);
+    params.append('data', data);
+    params.append('valor', valor);
     
     navigate(`/busca-resultados?${params.toString()}`);
-    window.location.reload();
   };
 
+  const handleFreteiroClick = (freteiro: any) => {
+    navigate(`/perfil-freteiro/${freteiro.id}`, { 
+      state: { freteiro }
+    });
+  };
+
+  const handleVeiculoClick = (peso: string) => {
+    const params = new URLSearchParams();
+    params.append('origem', '');
+    params.append('destino', '');
+    params.append('data', '');
+    params.append('valor', '');
+    params.append('veiculo', peso);
+    
+    navigate(`/busca-resultados?${params.toString()}`);
+  };
+
+  const handleWhatsAppRedirect = (number: string) => {
+    const cleanNumber = number.replace(/\D/g, '');
+    window.open(`https://wa.me/55${cleanNumber}`, '_blank');
+  };
+
+  const freteirosDestaque = [
+    {
+      id: 1,
+      nome: "João",
+      rating: 4.8,
+      avatar: "/fotos/João.png",
+      badge: "EXPRESSO",
+      badgeColor: "from-orange-500 to-red-500"
+    },
+    {
+      id: 2,
+      nome: "Alexandre",
+      rating: 4.9,
+      avatar: "/fotos/fd5929e7-8423-4237-90f9-5215648b9337.png",
+      subtitle: "Transportes",
+      badge: "ÁGIL",
+      badgeColor: "from-green-500 to-emerald-500"
+    },
+    {
+      id: 3,
+      nome: "Antonio",
+      rating: 4.7,
+      avatar: "/fotos/04022fef-79b1-40f3-8ab0-29d4750bc62b.png",
+      badge: "FRETE",
+      badgeColor: "from-red-500 to-pink-500"
+    },
+    {
+      id: 4,
+      nome: "Pedro",
+      rating: 4.6,
+      avatar: "/fotos/ff6a94d1-8bbb-4ab4-8d7c-39441d960fe4.png",
+      badge: "EXPRESSO",
+      badgeColor: "from-green-500 to-emerald-500"
+    },
+    {
+      id: 5,
+      nome: "Marcos",
+      rating: 4.8,
+      avatar: "/fotos/d91b9790-e09f-408e-a667-cd8a0de9aa06.png",
+      badge: "RÁPIDAS",
+      badgeColor: "from-blue-500 to-purple-500"
+    },
+    {
+      id: 6,
+      nome: "Carlos",
+      rating: 4.9,
+      avatar: "/fotos/f98f46b9-dcfa-4ab4-b8c8-91713423b263.png",
+      subtitle: "Especialista em mudanças",
+      badge: "PREMIUM",
+      badgeColor: "from-gray-800 to-black"
+    }
+  ];
+
+  const tiposVeiculo = [
+    {
+      peso: "300kg",
+      titulo: "Até 300Kg",
+      altura: "1,5m",
+      largura: "1,20m",
+      profundidade: "1,80m",
+      preco: "R$ 80",
+      imagem: "/fotos/9a96d18f-902b-4bf6-82bc-8301c894fb2c.png",
+      cor: "from-blue-600 to-indigo-600"
+    },
+    {
+      peso: "450kg",
+      titulo: "Até 450Kg",
+      altura: "2,0m",
+      largura: "1,60m",
+      profundidade: "1,80m",
+      preco: "R$ 120",
+      imagem: "/fotos/b527a141-17d9-41b3-abba-cf07c2550cf2.png",
+      cor: "from-green-600 to-emerald-600"
+    },
+    {
+      peso: "500kg",
+      titulo: "Até 500Kg",
+      altura: "2,3m",
+      largura: "1,80m",
+      profundidade: "2,20m",
+      preco: "R$ 180",
+      imagem: "/fotos/f144e6e6-15b2-4373-b0bc-fb73510e0fa7.png",
+      cor: "from-orange-600 to-red-600"
+    },
+    {
+      peso: "2500kg",
+      titulo: "Até 2500Kg",
+      altura: "4,5m",
+      largura: "2,10m",
+      alturaVeiculo: "2,30m",
+      preco: "R$ 350",
+      imagem: "/fotos/0a4c1113-12d1-4a6d-906d-fb72ea685bc1.png",
+      cor: "from-purple-600 to-pink-600"
+    },
+    {
+      peso: "4800kg",
+      titulo: "Até 4800Kg",
+      altura: "8,5m",
+      largura: "2,40m",
+      alturaVeiculo: "2,60m",
+      preco: "R$ 650",
+      imagem: "/fotos/199185e1-87f7-4c98-b712-c9a8e21d68a5.png",
+      cor: "from-gray-700 to-gray-900"
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-black dark:via-gray-900 dark:to-black transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md shadow-lg border-b border-white/20">
+      <header className="bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-xl border-b-2 border-blue-100 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-xl">
-                <Truck className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Busca Já</span>
+          <div className="flex justify-between items-center h-20">
+            <Link to="/" className="flex items-center space-x-3 group">
+              <Truck className="h-10 w-10 text-blue-600 dark:text-purple-400 group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                Busca Já
+              </span>
             </Link>
-            {user ? (
-              <Link to="/perfil">
-                <Avatar className="h-10 w-10 cursor-pointer hover:ring-4 hover:ring-blue-500/30 transition-all duration-300">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                </Avatar>
+            
+            <nav className="hidden md:flex space-x-8 items-center">
+              <Dialog open={showAbout} onOpenChange={setShowAbout}>
+                <DialogTrigger asChild>
+                  <button className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors duration-300 hover:scale-105 transform">
+                    Sobre
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl dark:bg-gray-900 dark:text-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-blue-600 dark:text-purple-400">Sobre Nós</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 text-gray-700 dark:text-gray-300">
+                    <p className="text-lg font-semibold">Conectando quem precisa de fretes com quem está pronto para ajudar.</p>
+                    <p>Somos uma plataforma local de Pelotas (RS) criada para facilitar a vida de quem precisa transportar mercadorias ou fazer mudanças. Seja para levar um móvel, mudar de casa ou entregar produtos, aqui você encontra motoristas com caminhonetes e caminhões prontos para atender com agilidade, segurança e preço justo.</p>
+                    <p>Nosso objetivo é unir quem precisa com quem pode transportar, valorizando o trabalho local e oferecendo oportunidades de renda extra.</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={showServices} onOpenChange={setShowServices}>
+                <DialogTrigger asChild>
+                  <button className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors duration-300 hover:scale-105 transform">
+                    Serviços
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl dark:bg-gray-900 dark:text-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-blue-600 dark:text-purple-400">Serviços</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 text-gray-700 dark:text-gray-300">
+                    <p className="text-lg font-semibold">Confira o que podemos fazer por você:</p>
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="font-semibold text-blue-600 dark:text-purple-400">Fretes rápidos:</h4>
+                        <p>transporte de mercadorias e pequenos volumes com agilidade.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-600 dark:text-purple-400">Mudanças residenciais:</h4>
+                        <p>ideal para quem vai se mudar e precisa de ajuda com transporte.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-600 dark:text-purple-400">Parcerias com motoristas:</h4>
+                        <p>se você tem uma caminhonete ou caminhão, cadastre-se e comece a ganhar.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-600 dark:text-purple-400">Atendimento local:</h4>
+                        <p>serviço voltado exclusivamente para Pelotas e região.</p>
+                      </div>
+                    </div>
+                    <p className="italic">Não importa o tamanho da carga – temos sempre alguém disponível para levar até o destino com segurança.</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={showContact} onOpenChange={setShowContact}>
+                <DialogTrigger asChild>
+                  <button className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors duration-300 hover:scale-105 transform">
+                    Fale Conosco
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl dark:bg-gray-900 dark:text-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-blue-600 dark:text-purple-400">Fale Conosco</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 text-gray-700 dark:text-gray-300">
+                    <p className="text-lg font-semibold">Tem alguma dúvida, sugestão? Fale com a gente!</p>
+                    <p>Estamos prontos para te ajudar no que for preciso. Entre em contato pelos números:</p>
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={() => handleWhatsAppRedirect('53991307002')} 
+                        className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        (53) 99130-7002 (John)
+                      </Button>
+                      <Button 
+                        onClick={() => handleWhatsAppRedirect('48998314791')} 
+                        className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        (48) 99831-4791 (Luiz)
+                      </Button>
+                      <Button 
+                        onClick={() => handleWhatsAppRedirect('53991679683')} 
+                        className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        (53) 99167-9683 (Thiago)
+                      </Button>
+                      <Button 
+                        onClick={() => handleWhatsAppRedirect('53981128290')} 
+                        className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        (53) 98112-8290 (Andrio)
+                      </Button>
+                    </div>
+                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <p>📍 Atendemos toda a cidade de Pelotas (RS) e região.</p>
+                      <p>📞 Retorno rápido e atendimento humanizado.</p>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Link 
+                to="/dashboard-freteiro"
+                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold transition-colors duration-300 hover:scale-105 transform"
+              >
+                Área do Freteiro
               </Link>
+            </nav>
+
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <ThemeToggle />
+                <Link to="/perfil">
+                  <Avatar className="h-10 w-10 cursor-pointer hover:ring-4 hover:ring-blue-500/30 dark:hover:ring-purple-500/30 transition-all duration-300">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                </Link>
+              </div>
             ) : (
-              <div className="flex space-x-3">
+              <div className="flex space-x-3 items-center">
+                <ThemeToggle />
                 <Link to="/cadastro">
-                  <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 rounded-full font-medium transition-all duration-300">
+                  <Button variant="outline" className="text-blue-600 dark:text-purple-400 border-blue-600 dark:border-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20 rounded-full px-6 font-medium transition-all duration-300 hover:scale-105">
                     Cadastrar-se
                   </Button>
                 </Link>
                 <Link to="/login">
-                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-full font-medium">
+                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-purple-700 dark:hover:to-pink-700 rounded-full px-6 font-medium transition-all duration-300 hover:scale-105 shadow-lg">
                     Entrar
                   </Button>
                 </Link>
@@ -219,260 +389,258 @@ const BuscaResultados = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar de Busca Rápida */}
-          <div className="w-80 flex-shrink-0">
-            <Card className="sticky top-8 shadow-xl border-0 bg-white/95 backdrop-blur-md rounded-2xl">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-2xl">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Search className="h-5 w-5" />
-                  Busca Rápida
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 p-6">
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    🏙️ Cidade/Estado
-                  </label>
-                  <Input 
-                    placeholder="Ex: Pelotas, RS"
-                    value={buscaOrigem}
-                    onChange={(e) => setBuscaOrigem(e.target.value)}
-                    className="rounded-xl border-gray-200 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    📍 Endereço
-                  </label>
-                  <Input 
-                    placeholder="Ex: Rua Felix da Cunha, 520"
-                    value={buscaDestino}
-                    onChange={(e) => setBuscaDestino(e.target.value)}
-                    className="rounded-xl border-gray-200 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    📅 Data
-                  </label>
-                  <Input 
-                    type="date"
-                    value={buscaData}
-                    onChange={(e) => setBuscaData(e.target.value)}
-                    className="rounded-xl border-gray-200 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    💰 Valor Máximo
-                  </label>
-                  <Input 
-                    placeholder="Ex: R$ 500,00"
-                    value={buscaValor}
-                    onChange={(e) => setBuscaValor(e.target.value)}
-                    className="rounded-xl border-gray-200 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-
-                <Button 
-                  onClick={handleBuscaRapida}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl py-3 font-semibold shadow-lg transition-all duration-300 hover:scale-105"
-                >
-                  Pesquisar
-                </Button>
-
-                {/* Filtros Populares */}
-                <div className="pt-6 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    Filtros populares
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      "Com montagem",
-                      "Com desmontagem", 
-                      "Com embalagem incluída",
-                      "Ajudantes inclusos"
-                    ].map((filtro) => (
-                      <label key={filtro} className="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
-                        <input type="checkbox" className="mr-3 accent-blue-600" />
-                        <span className="text-sm text-gray-700">{filtro}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Por peso */}
-                <div className="pt-4 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-4">Por peso</h3>
-                  <div className="space-y-3">
-                    {["Até 300kg", "Até 450kg", "Até 1500kg", "Até 2500kg"].map((peso) => (
-                      <label key={peso} className="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
-                        <input type="checkbox" className="mr-3 accent-blue-600" />
-                        <span className="text-sm text-gray-700">{peso}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Por Avaliação */}
-                <div className="pt-4 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-4">Por Avaliação</h3>
-                  <div className="space-y-3">
-                    {["Qualquer uma", "Excelente", "Muito bom", "Bom"].map((avaliacao) => (
-                      <label key={avaliacao} className="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
-                        <input type="checkbox" className="mr-3 accent-blue-600" />
-                        <span className="text-sm text-gray-700">{avaliacao}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Resultados Principais */}
-          <div className="flex-1">
-            {/* Cabeçalho dos resultados */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                <Package className="h-4 w-4" />
-                <span className="font-medium">{freteiros.length} resultados encontrados</span>
-                {veiculoFiltro && (
-                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
-                    Filtro: {veiculoFiltro}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {origem || 'Todos os locais'} → {destino || 'Todos os destinos'}
+      {/* Hero Section with enhanced search */}
+      <section className="relative">
+        <div 
+          className="h-96 bg-cover bg-center bg-no-repeat relative rounded-3xl mx-8 mt-8 shadow-2xl"
+          style={{
+            backgroundImage: "url('/fotos/cf9bf23c-c6da-4263-944e-d8f9de4bd90b.png')"
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 rounded-3xl"></div>
+          <div className="relative h-full flex flex-col justify-center px-12">
+            <div className="text-center text-white mb-8">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                Foco em tranquilidade para o cliente
               </h1>
-              <p className="text-gray-600">
-                {data && `📅 ${data}`} 
-                {valor && ` • 💰 Até R$ ${valor}`}
+              <p className="text-xl text-gray-200 font-medium">
+                "Deixe a carga com a gente. Você só se preocupa com o destino."
               </p>
             </div>
-
-            {/* Lista de Freteiros */}
-            <div className="space-y-6">
-              {freteiros.length > 0 ? (
-                freteiros.map((freteiro) => (
-                  <Card key={freteiro.id} className="hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-0 shadow-lg rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md">
-                    <CardContent className="p-8">
-                      <div className="flex gap-6">
-                        {/* Avatar */}
-                        <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg">
-                          <img 
-                            src={freteiro.avatar}
-                            alt={freteiro.nome}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-
-                        {/* Conteúdo principal */}
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl font-bold text-blue-600">{freteiro.nome}</h3>
-                                {freteiro.verificado && (
-                                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                                    ✓ VERIFICADO
-                                  </div>
-                                )}
-                              </div>
-                              <p className="text-sm text-gray-600 font-medium">Até {freteiro.veiculo}</p>
-                              <p className="text-sm text-gray-700 mt-2">{freteiro.descricao}</p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{freteiro.preco}</div>
-                              <div className="text-sm text-gray-500">por frete</div>
-                            </div>
-                          </div>
-
-                          {/* Informações adicionais */}
-                          <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
-                            <span className="flex items-center gap-1">
-                              📄 Nota fiscal inclusa
-                            </span>
-                            <span className="flex items-center gap-1">
-                              ⏱️ {freteiro.tempo}
-                            </span>
-                          </div>
-
-                          {/* Rating e ações */}
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold">{freteiro.ratingText}</span>
-                                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                  ⭐ {freteiro.rating}
-                                </div>
-                              </div>
-                              <span className="text-sm text-gray-500">({freteiro.avaliacoes} avaliações)</span>
-                            </div>
-                            <div className="flex gap-3">
-                              <Button 
-                                onClick={() => handleVerPerfil(freteiro)}
-                                variant="outline"
-                                className="border-blue-600 text-blue-600 hover:bg-blue-50 rounded-xl px-6 font-semibold transition-all duration-300 hover:scale-105"
-                              >
-                                Ver Perfil
-                              </Button>
-                              <Button 
-                                onClick={() => handleContratarFrete(freteiro)}
-                                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl px-8 font-semibold shadow-lg transition-all duration-300 hover:scale-105"
-                              >
-                                Contratar Frete
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-gray-500 text-lg mb-4">Nenhum freteiro encontrado com os filtros aplicados</div>
-                  <p className="text-gray-400">Tente ajustar os critérios de busca</p>
-                </div>
-              )}
+            
+            {/* Enhanced Search Form with validation */}
+            <div className="max-w-4xl mx-auto w-full">
+              <Card className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border-0 overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="grid grid-cols-5 h-28">
+                    <div className="p-6 border-r border-gray-200 dark:border-gray-700">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                        Cidade/Estado
+                      </label>
+                      <Input 
+                        placeholder="Para onde será o frete?"
+                        value={origem}
+                        onChange={(e) => handleInputChange('origem', e.target.value)}
+                        className={`border-0 bg-transparent p-0 text-base font-medium focus-visible:ring-0 placeholder-gray-400 h-auto text-gray-900 dark:text-white ${
+                          fieldErrors.origem ? 'border-red-500' : ''
+                        }`}
+                        required
+                      />
+                      <FormValidation 
+                        value={origem} 
+                        type="cidade" 
+                        showValidation={showValidation} 
+                      />
+                    </div>
+                    <div className="p-6 border-r border-gray-200 dark:border-gray-700">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                        Endereço
+                      </label>
+                      <Input 
+                        placeholder="Nome da rua"
+                        value={destino}
+                        onChange={(e) => handleInputChange('destino', e.target.value)}
+                        className={`border-0 bg-transparent p-0 text-base font-medium focus-visible:ring-0 placeholder-gray-400 h-auto text-gray-900 dark:text-white ${
+                          fieldErrors.destino ? 'border-red-500' : ''
+                        }`}
+                        required
+                      />
+                      <FormValidation 
+                        value={destino} 
+                        type="endereco" 
+                        showValidation={showValidation} 
+                      />
+                    </div>
+                    <div className="p-6 border-r border-gray-200 dark:border-gray-700">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                        Data
+                      </label>
+                      <Input 
+                        type="date"
+                        placeholder="Para quando será"
+                        value={data}
+                        onChange={(e) => handleInputChange('data', e.target.value)}
+                        className={`border-0 bg-transparent p-0 text-base font-medium focus-visible:ring-0 h-auto text-gray-900 dark:text-white ${
+                          fieldErrors.data ? 'border-red-500' : ''
+                        }`}
+                        required
+                      />
+                      <FormValidation 
+                        value={data} 
+                        type="data" 
+                        showValidation={showValidation} 
+                      />
+                    </div>
+                    <div className="p-6 border-r border-gray-200 dark:border-gray-700">
+                      <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                        Valor Máximo
+                      </label>
+                      <Input 
+                        placeholder="Adicionar Valor"
+                        value={valor}
+                        onChange={(e) => handleInputChange('valor', e.target.value)}
+                        className={`border-0 bg-transparent p-0 text-base font-medium focus-visible:ring-0 placeholder-gray-400 h-auto text-gray-900 dark:text-white ${
+                          fieldErrors.valor ? 'border-red-500' : ''
+                        }`}
+                        required
+                      />
+                      <FormValidation 
+                        value={valor} 
+                        type="valor" 
+                        showValidation={showValidation} 
+                      />
+                    </div>
+                    <div className="p-6 flex items-center justify-center">
+                      <Button 
+                        onClick={handleSearch}
+                        className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-purple-700 dark:hover:to-pink-700 rounded-full p-0 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+                      >
+                        <ArrowRight className="h-6 w-6" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-
-            {/* Paginação */}
-            {freteiros.length > 0 && (
-              <div className="mt-12 flex justify-center">
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" disabled className="rounded-xl">
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  {[1, 2, 3, 4, '...', 25].map((page, index) => (
-                    <Button
-                      key={index}
-                      variant={page === 1 ? "default" : "outline"}
-                      size="sm"
-                      className={`rounded-xl ${page === 1 ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white" : ""}`}
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                  <Button variant="outline" size="sm" className="rounded-xl">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Em destaque Section */}
+      <section className="py-12 bg-gradient-to-r from-slate-50 to-blue-50 dark:from-black dark:to-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Em destaque</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {freteirosDestaque.map((freteiro) => (
+              <div 
+                key={freteiro.id}
+                onClick={() => handleFreteiroClick(freteiro)}
+                className="bg-white dark:bg-purple-900/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer border-l-4 border-blue-500 dark:border-purple-400"
+              >
+                <div className="relative">
+                  <img 
+                    src={freteiro.avatar}
+                    alt={freteiro.nome}
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                </div>
+                <div className="p-4">
+                  {freteiro.badge && (
+                    <div className={`bg-gradient-to-r ${freteiro.badgeColor} text-white px-3 py-1 rounded-full text-xs mb-2 font-semibold shadow-lg`}>
+                      {freteiro.badge}
+                    </div>
+                  )}
+                  <h3 className="font-bold text-sm text-gray-900 dark:text-white">{freteiro.nome}</h3>
+                  {freteiro.subtitle && (
+                    <p className="text-xs text-gray-600 dark:text-gray-300">{freteiro.subtitle}</p>
+                  )}
+                  <div className="flex items-center mt-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="text-xs text-gray-600 dark:text-gray-300 ml-1">{freteiro.rating}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tipos de veículo Section */}
+      <section className="py-16 bg-white dark:bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">Tipos de veículo</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            {tiposVeiculo.map((veiculo) => (
+              <Card 
+                key={veiculo.peso}
+                onClick={() => handleVeiculoClick(veiculo.peso)}
+                className="hover:shadow-2xl transition-all duration-300 hover:scale-105 border-0 shadow-lg rounded-2xl overflow-hidden cursor-pointer dark:bg-purple-900/40 dark:hover:bg-purple-800/40"
+              >
+                <div className="relative">
+                  <img 
+                    src={veiculo.imagem}
+                    alt={veiculo.titulo}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className={`absolute top-4 left-4 bg-gradient-to-r ${veiculo.cor} text-white px-3 py-1 rounded-full text-sm font-bold`}>
+                    {veiculo.peso}
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-xl mb-3 text-gray-800 dark:text-white">{veiculo.titulo}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">📏 Altura: {veiculo.altura} | Largura: {veiculo.largura}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">📐 {veiculo.profundidade ? `Profundidade: ${veiculo.profundidade}` : `Altura: ${veiculo.alturaVeiculo}`}</p>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-bold text-lg bg-gradient-to-r ${veiculo.cor} bg-clip-text text-transparent`}>A partir de {veiculo.preco}</span>
+                    <Button size="sm" className={`bg-gradient-to-r ${veiculo.cor} hover:opacity-90 rounded-full`}>
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-black dark:to-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 rounded-3xl p-12 text-center text-white shadow-2xl">
+            <div className="flex items-center justify-center mb-8">
+              <div className="bg-white/20 p-4 rounded-2xl mr-6">
+                <User className="h-12 w-12 text-white" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-2xl font-bold mb-2">Ei, você!</h2>
+                <p className="text-blue-100 dark:text-purple-100 text-lg">
+                  Gostaria de anunciar seus serviços em nosso site? Junte-se à nossa plataforma e anuncie o
+                  quanto antes!
+                </p>
+              </div>
+            </div>
+            <Link to="/cadastro-freteiro">
+              <Button className="bg-white text-blue-600 dark:text-purple-600 hover:bg-blue-50 dark:hover:bg-purple-50 px-10 py-4 text-lg rounded-full font-bold shadow-lg transition-all duration-300 hover:scale-105">
+                Cadastro de Freteiro
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-gray-900 to-black dark:from-black dark:to-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 p-2 rounded-xl">
+                  <Truck className="h-8 w-8 text-white" />
+                </div>
+                <span className="text-2xl font-bold">Busca Já</span>
+              </div>
+              <p className="text-gray-400 dark:text-gray-300 text-lg">
+                Viemos entregar um serviço de alta qualidade desde 2025
+              </p>
+            </div>
+            <div></div>
+            <div className="text-right">
+              <div className="space-y-3 text-gray-400 dark:text-gray-300">
+                <p className="hover:text-white transition-colors cursor-pointer">Ajuda</p>
+                <p className="hover:text-white transition-colors cursor-pointer">Perguntas Frequentes</p>
+                <p className="hover:text-white transition-colors cursor-pointer">SAC</p>
+                <p className="hover:text-white transition-colors cursor-pointer">Entre em contato</p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 dark:border-gray-700 mt-12 pt-8 text-center text-gray-400 dark:text-gray-300">
+            <p>Busca Já © 2025 - Todos os direitos reservados</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default BuscaResultados;
+export default Index;

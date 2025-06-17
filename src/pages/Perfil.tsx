@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,10 +67,10 @@ const Perfil = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card>
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
+        <Card className="dark:bg-gray-900">
           <CardContent className="p-6">
-            <p>Você precisa estar logado para acessar esta página.</p>
+            <p className="dark:text-white">Você precisa estar logado para acessar esta página.</p>
             <Link to="/login">
               <Button className="mt-4">Fazer Login</Button>
             </Link>
@@ -148,13 +149,13 @@ const Perfil = () => {
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Dados Pessoais</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dados Pessoais</h2>
               <Button
                 onClick={editando ? handleSalvar : () => setEditando(true)}
                 className={`rounded-lg px-6 py-2 font-semibold ${
                   editando 
                     ? "bg-green-600 hover:bg-green-700 text-white" 
-                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white"
                 }`}
               >
                 {editando ? (
@@ -173,7 +174,7 @@ const Perfil = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="nome" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="nome" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Nome Completo
                 </Label>
                 <Input
@@ -182,12 +183,12 @@ const Perfil = () => {
                   value={dadosUsuario.nome}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Email
                 </Label>
                 <Input
@@ -196,12 +197,12 @@ const Perfil = () => {
                   value={dadosUsuario.email}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="telefone" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="telefone" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Telefone
                 </Label>
                 <Input
@@ -210,12 +211,12 @@ const Perfil = () => {
                   value={dadosUsuario.telefone}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="cpf" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="cpf" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   CPF
                 </Label>
                 <Input
@@ -224,7 +225,7 @@ const Perfil = () => {
                   value={dadosUsuario.cpf}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
             </div>
@@ -234,11 +235,11 @@ const Perfil = () => {
       case 'enderecos':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Endereços</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Endereços</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="endereco" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="endereco" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Endereço
                 </Label>
                 <Input
@@ -247,12 +248,12 @@ const Perfil = () => {
                   value={dadosUsuario.endereco}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="bairro" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="bairro" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Bairro
                 </Label>
                 <Input
@@ -261,12 +262,12 @@ const Perfil = () => {
                   value={dadosUsuario.bairro}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="cidade" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="cidade" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Cidade
                 </Label>
                 <Input
@@ -275,12 +276,12 @@ const Perfil = () => {
                   value={dadosUsuario.cidade}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="estado" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="estado" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   Estado
                 </Label>
                 <Input
@@ -289,12 +290,12 @@ const Perfil = () => {
                   value={dadosUsuario.estado}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
 
               <div>
-                <Label htmlFor="cep" className="text-sm font-medium text-gray-700 mb-2 block">
+                <Label htmlFor="cep" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                   CEP
                 </Label>
                 <Input
@@ -303,7 +304,7 @@ const Perfil = () => {
                   value={dadosUsuario.cep}
                   onChange={handleInputChange}
                   disabled={!editando}
-                  className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                  className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
             </div>
@@ -313,16 +314,16 @@ const Perfil = () => {
       case 'pagamento':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Formas de Pagamento</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Formas de Pagamento</h2>
             
-            <Card className="border-2 border-gray-200 rounded-lg">
+            <Card className="border-2 border-gray-200 dark:border-gray-600 rounded-lg dark:bg-gray-800">
               <CardHeader>
-                <CardTitle className="text-lg">Adicionar Cartão de Crédito</CardTitle>
+                <CardTitle className="text-lg dark:text-white">Adicionar Cartão de Crédito</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Label htmlFor="numero" className="text-sm font-medium text-gray-700 mb-2 block">
+                    <Label htmlFor="numero" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Número do Cartão
                     </Label>
                     <Input
@@ -331,12 +332,12 @@ const Perfil = () => {
                       placeholder="0000 0000 0000 0000"
                       value={dadosCartao.numero}
                       onChange={handleCartaoChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <Label htmlFor="nomeCartao" className="text-sm font-medium text-gray-700 mb-2 block">
+                    <Label htmlFor="nomeCartao" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Nome no Cartão
                     </Label>
                     <Input
@@ -345,12 +346,12 @@ const Perfil = () => {
                       placeholder="Nome como impresso no cartão"
                       value={dadosCartao.nome}
                       onChange={handleCartaoChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="validade" className="text-sm font-medium text-gray-700 mb-2 block">
+                    <Label htmlFor="validade" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       Validade
                     </Label>
                     <Input
@@ -359,12 +360,12 @@ const Perfil = () => {
                       placeholder="MM/AA"
                       value={dadosCartao.validade}
                       onChange={handleCartaoChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="cvv" className="text-sm font-medium text-gray-700 mb-2 block">
+                    <Label htmlFor="cvv" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       CVV
                     </Label>
                     <Input
@@ -373,12 +374,12 @@ const Perfil = () => {
                       placeholder="000"
                       value={dadosCartao.cvv}
                       onChange={handleCartaoChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
 
                   <div className="md:col-span-2">
-                    <Label htmlFor="cpfCartao" className="text-sm font-medium text-gray-700 mb-2 block">
+                    <Label htmlFor="cpfCartao" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                       CPF do Portador
                     </Label>
                     <Input
@@ -387,12 +388,12 @@ const Perfil = () => {
                       placeholder="000.000.000-00"
                       value={dadosCartao.cpf}
                       onChange={handleCartaoChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
                 </div>
 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-12">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg h-12">
                   <CreditCard className="h-4 w-4 mr-2" />
                   Salvar Cartão
                 </Button>
@@ -404,24 +405,24 @@ const Perfil = () => {
       case 'meus-fretes':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Meus Fretes</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Meus Fretes</h2>
             
             <div className="space-y-4">
               {fretesUsuario.map((frete) => (
-                <Card key={frete.id} className="border-2 border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+                <Card key={frete.id} className="border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:shadow-lg transition-shadow dark:bg-gray-800">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{frete.freteiro}</h3>
-                        <p className="text-gray-600">{frete.origem} → {frete.destino}</p>
-                        <p className="text-sm text-gray-500">Data: {new Date(frete.data).toLocaleDateString('pt-BR')}</p>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{frete.freteiro}</h3>
+                        <p className="text-gray-600 dark:text-gray-300">{frete.origem} → {frete.destino}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Data: {new Date(frete.data).toLocaleDateString('pt-BR')}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-green-600">{frete.valor}</div>
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400">{frete.valor}</div>
                         <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
                           frete.status === 'Concluído' 
-                            ? 'bg-green-100 text-green-600' 
-                            : 'bg-blue-100 text-blue-600'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
+                            : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                         }`}>
                           {frete.status}
                         </div>
@@ -430,12 +431,12 @@ const Perfil = () => {
                     
                     {frete.status === 'Concluído' && frete.avaliacao && (
                       <div className="flex items-center space-x-2 mb-4">
-                        <span className="text-sm text-gray-600">Sua avaliação:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Sua avaliação:</span>
                         <div className="flex space-x-1">
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i} 
-                              className={`w-4 h-4 ${i < frete.avaliacao ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                              className={`w-4 h-4 ${i < frete.avaliacao ? 'text-yellow-400 fill-current' : 'text-gray-300 dark:text-gray-600'}`}
                             />
                           ))}
                         </div>
@@ -443,7 +444,7 @@ const Perfil = () => {
                     )}
                     
                     <div className="flex gap-3">
-                      <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg">
+                      <Button variant="outline" className="border-blue-600 dark:border-purple-600 text-blue-600 dark:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20 rounded-lg">
                         Ver Detalhes
                       </Button>
                       {frete.status === 'Concluído' && !frete.avaliacao && (
@@ -462,16 +463,16 @@ const Perfil = () => {
       case 'seguranca':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Segurança</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Segurança</h2>
             
-            <Card className="border-2 border-gray-200 rounded-lg">
+            <Card className="border-2 border-gray-200 dark:border-gray-600 rounded-lg dark:bg-gray-800">
               <CardHeader>
-                <CardTitle className="text-lg">Alterar Senha</CardTitle>
-                <CardDescription>Mantenha sua conta segura alterando sua senha regularmente</CardDescription>
+                <CardTitle className="text-lg dark:text-white">Alterar Senha</CardTitle>
+                <CardDescription className="dark:text-gray-300">Mantenha sua conta segura alterando sua senha regularmente</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="senhaAtual" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="senhaAtual" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                     Senha Atual
                   </Label>
                   <div className="relative">
@@ -481,13 +482,13 @@ const Perfil = () => {
                       type={showPassword ? "text" : "password"}
                       value={dadosSeguranca.senhaAtual}
                       onChange={handleSegurancaChange}
-                      className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                      className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 dark:text-gray-300"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -496,7 +497,7 @@ const Perfil = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="novaSenha" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="novaSenha" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                     Nova Senha
                   </Label>
                   <Input
@@ -505,12 +506,12 @@ const Perfil = () => {
                     type={showPassword ? "text" : "password"}
                     value={dadosSeguranca.novaSenha}
                     onChange={handleSegurancaChange}
-                    className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                    className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="confirmarSenha" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="confirmarSenha" className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 block">
                     Confirmar Nova Senha
                   </Label>
                   <Input
@@ -519,13 +520,13 @@ const Perfil = () => {
                     type={showPassword ? "text" : "password"}
                     value={dadosSeguranca.confirmarSenha}
                     onChange={handleSegurancaChange}
-                    className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500"
+                    className="h-12 rounded-lg border-2 border-gray-200 dark:border-gray-600 focus:border-blue-500 dark:focus:border-purple-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
                 <Button 
                   onClick={handleAlterarSenha}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-12"
+                  className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg h-12"
                 >
                   <Shield className="h-4 w-4 mr-2" />
                   Alterar Senha
@@ -533,27 +534,27 @@ const Perfil = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-gray-200 rounded-lg">
+            <Card className="border-2 border-gray-200 dark:border-gray-600 rounded-lg dark:bg-gray-800">
               <CardHeader>
-                <CardTitle className="text-lg">Recuperação de Conta</CardTitle>
-                <CardDescription>Configure opções de recuperação para sua conta</CardDescription>
+                <CardTitle className="text-lg dark:text-white">Recuperação de Conta</CardTitle>
+                <CardDescription className="dark:text-gray-300">Configure opções de recuperação para sua conta</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
-                    <h4 className="font-semibold">Email de recuperação</h4>
-                    <p className="text-sm text-gray-600">{dadosUsuario.email}</p>
+                    <h4 className="font-semibold dark:text-white">Email de recuperação</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{dadosUsuario.email}</p>
                   </div>
-                  <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                  <Button variant="outline" className="border-blue-600 dark:border-purple-600 text-blue-600 dark:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20">
                     Alterar
                   </Button>
                 </div>
-                <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div>
-                    <h4 className="font-semibold">Telefone de recuperação</h4>
-                    <p className="text-sm text-gray-600">{dadosUsuario.telefone}</p>
+                    <h4 className="font-semibold dark:text-white">Telefone de recuperação</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{dadosUsuario.telefone}</p>
                   </div>
-                  <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                  <Button variant="outline" className="border-blue-600 dark:border-purple-600 text-blue-600 dark:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20">
                     Alterar
                   </Button>
                 </div>
@@ -568,23 +569,25 @@ const Perfil = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white dark:bg-black shadow-sm border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center space-x-2">
-              <Truck className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Busca Já</span>
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 p-2 rounded-xl">
+                <Truck className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-purple-600 dark:to-pink-600 bg-clip-text text-transparent">Busca Já</span>
             </Link>
             <div className="flex items-center space-x-4">
               <Link to="/meus-fretes">
-                <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg">
+                <Button variant="outline" className="border-blue-600 dark:border-purple-600 text-blue-600 dark:text-purple-400 hover:bg-blue-50 dark:hover:bg-purple-900/20 rounded-lg">
                   <Package className="h-4 w-4 mr-2" />
                   Meus Fretes
                 </Button>
               </Link>
-              <Button variant="outline" onClick={logout} className="border-red-600 text-red-600 hover:bg-red-50 rounded-lg">
+              <Button variant="outline" onClick={logout} className="border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sair
               </Button>
@@ -597,9 +600,9 @@ const Perfil = () => {
         <div className="flex gap-8">
           {/* Sidebar com menu */}
           <div className="w-80 flex-shrink-0">
-            <Card className="sticky top-8">
+            <Card className="sticky top-8 dark:bg-gray-900">
               {/* Header do perfil */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 rounded-t-lg">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-purple-600 dark:to-pink-800 text-white p-6 rounded-t-lg">
                 <div className="text-center">
                   <div className="relative inline-block">
                     <Avatar className="h-24 w-24 border-4 border-white mx-auto">
@@ -628,10 +631,10 @@ const Perfil = () => {
                     <button
                       key={item.id}
                       onClick={() => setSecaoAtiva(item.id)}
-                      className={`w-full flex items-center px-6 py-4 text-left hover:bg-gray-50 border-b border-gray-100 transition-colors ${
+                      className={`w-full flex items-center px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors ${
                         secaoAtiva === item.id 
-                          ? 'bg-blue-50 text-blue-600 border-r-4 border-r-blue-600' 
-                          : 'text-gray-700'
+                          ? 'bg-blue-50 dark:bg-purple-900/30 text-blue-600 dark:text-purple-400 border-r-4 border-r-blue-600 dark:border-r-purple-600' 
+                          : 'text-gray-700 dark:text-gray-300'
                       }`}
                     >
                       <item.icon className="h-5 w-5 mr-3" />
@@ -645,7 +648,7 @@ const Perfil = () => {
 
           {/* Conteúdo principal */}
           <div className="flex-1">
-            <Card className="shadow-lg border-0 rounded-lg">
+            <Card className="shadow-lg border-0 rounded-lg dark:bg-gray-900">
               <CardContent className="p-8">
                 {renderContent()}
               </CardContent>
